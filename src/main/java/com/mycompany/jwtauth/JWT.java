@@ -19,13 +19,13 @@ public class JWT {
     
     private AbstractDB dbImpl;
     
-    public JWT(AbstractDB dbImpl){
+    public JWT(AbstractDB dbImpl) {
         this.dbImpl = dbImpl;
     }
     
     public String generateJWT(String username, String password) throws JoseException {
         
-        if(!dbImpl.verifyUser(username, password)) {
+        if (!dbImpl.verifyUser(username, password)) {
             return "Invalid userID and/or password.";
         }
         
