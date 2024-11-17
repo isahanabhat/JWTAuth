@@ -4,10 +4,11 @@
  */
 package com.mycompany.jwtauth;
 
+
 /**
  *
  * @author bhats
  */
 public interface JWTDB {
-    
+    public boolean verifyUser(String username, String password);
 }
