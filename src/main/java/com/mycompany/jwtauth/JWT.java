@@ -4,6 +4,9 @@
  */
 package com.mycompany.jwtauth;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Base64;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -18,9 +21,14 @@ import org.jose4j.lang.JoseException;
 public class JWT {
     
     private AbstractDB dbImpl;
+    private PrivateKey privateKey;
+    private PublicKey publicKey;
     
-    public JWT(AbstractDB dbImpl) {
+    public JWT(AbstractDB dbImpl) throws JoseException {
         this.dbImpl = dbImpl;
+        RsaJsonWebKey rsa = RsaJwkGenerator.generateJwk(2084);
+        this.privateKey = rsa.getPrivateKey();
+        this.publicKey = rsa.getPublicKey();
     }
     
     public String generateJWT(String username, String password) throws JoseException {
@@ -38,7 +46,7 @@ public class JWT {
         
         JwtClaims claims = new JwtClaims();
         JsonWebSignature jws = new JsonWebSignature();
-        RsaJsonWebKey rsa = RsaJwkGenerator.generateJwk(2084);
+        //RsaJsonWebKey rsa = RsaJwkGenerator.generateJwk(2084);
         
         claims.setClaim("Claims", jwt_claim);
         claims.setIssuer(jwt_issuer);
@@ -46,13 +54,22 @@ public class JWT {
         claims.setJwtId(jwt_id);
         
         jws.setPayload(claims.toJson());
-        jws.setKey(rsa.getPrivateKey());
+        jws.setKey(privateKey);
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
         
         //System.out.println("Claims = "+claims);
         //System.out.println("JWS = "+ jws);
         jwt = jws.getCompactSerialization();
-        
         return jwt;
+    }
+    public String decodeJWT(String jwt) {
+        String[] split_jwt = jwt.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String header = new String(decoder.decode(split_jwt[0]));
+        String payload = new String(decoder.decode(split_jwt[1]));
+        System.out.println(header);
+        System.out.println(payload);
+        
+        return "";
     }
 }

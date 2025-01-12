@@ -23,6 +23,7 @@ public class TestJWT {
         JWT j = new JWT(dbTest);
         
         String jwt1 = j.generateJWT(user1, pwd1);
+        System.out.println(jwt1);
         Assert.assertNotEquals("Invalid userID and/or password.", jwt1);
     }
     
@@ -48,5 +49,17 @@ public class TestJWT {
         
         String jwt1 = j.generateJWT(user1, pwd1);
         Assert.assertEquals("Invalid userID and/or password.", jwt1);
+    }
+    @Test
+    public void test_04() throws JoseException {
+        String user1 = "sahana";
+        String pwd1 = "12345";
+        
+        TestDB dbTest = new TestDB();
+        JWT j = new JWT(dbTest);
+        
+        String jwt1 = j.generateJWT(user1, pwd1);
+        String testing = j.decodeJWT(jwt1);
+        Assert.assertNotEquals("Invalid userID and/or password.", jwt1);
     }
 }
