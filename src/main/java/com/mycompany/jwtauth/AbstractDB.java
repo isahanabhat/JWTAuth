@@ -10,4 +10,8 @@ package com.mycompany.jwtauth;
  */
 public abstract class AbstractDB {
     public abstract boolean verifyUser(String username, String password);
+    public abstract String getClaims(String username);
+    public abstract String getIssuer(String username);
+    public abstract String getSubject(String username);
+    public abstract String getJWTId(String username);
 }

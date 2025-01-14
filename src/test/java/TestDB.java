@@ -17,4 +17,20 @@ public class TestDB extends AbstractDB{
         return "sahana".equals(username) && "12345".equals(password);
     }
     
+    @Override
+    public String getClaims(String username) {
+        return "im da best";
+    }
+    @Override
+    public String getIssuer(String username) {
+        return username;
+    }
+    @Override
+    public String getSubject(String username) {
+        return "life";
+    }
+    @Override
+    public String getJWTId(String username) {
+        return "sahanabhat@123";
+    }
 }

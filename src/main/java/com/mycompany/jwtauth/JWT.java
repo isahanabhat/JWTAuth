@@ -7,6 +7,10 @@ package com.mycompany.jwtauth;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
+import org.jose4j.json.internal.json_simple.JSONArray;
+import org.jose4j.json.internal.json_simple.JSONObject;
+import org.jose4j.json.internal.json_simple.parser.JSONParser;
+import org.jose4j.json.internal.json_simple.parser.ParseException;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -39,19 +43,14 @@ public class JWT {
         
         String jwt = "";
         
-        String jwt_claim = "im da best";
-        String jwt_issuer = username;
-        String jwt_subject = "life";
-        String jwt_id = "sahanabhat@123";
-        
         JwtClaims claims = new JwtClaims();
         JsonWebSignature jws = new JsonWebSignature();
         //RsaJsonWebKey rsa = RsaJwkGenerator.generateJwk(2084);
         
-        claims.setClaim("Claims", jwt_claim);
-        claims.setIssuer(jwt_issuer);
-        claims.setSubject(jwt_subject);
-        claims.setJwtId(jwt_id);
+        claims.setClaim("Claims", dbImpl.getClaims(username));
+        claims.setIssuer(dbImpl.getIssuer(username));
+        claims.setSubject(dbImpl.getSubject(username));
+        claims.setJwtId(dbImpl.getJWTId(username));
         
         jws.setPayload(claims.toJson());
         jws.setKey(privateKey);
@@ -62,14 +61,21 @@ public class JWT {
         jwt = jws.getCompactSerialization();
         return jwt;
     }
-    public String decodeJWT(String jwt) {
+    public JSONArray decodeJWT(String jwt) throws ParseException {
         String[] split_jwt = jwt.split("\\.");
         Base64.Decoder decoder = Base64.getUrlDecoder();
+        
         String header = new String(decoder.decode(split_jwt[0]));
         String payload = new String(decoder.decode(split_jwt[1]));
-        System.out.println(header);
-        System.out.println(payload);
         
-        return "";
+        JSONParser parser = new JSONParser();  
+        JSONObject json_header = (JSONObject) parser.parse(header);
+        JSONObject json_payload = (JSONObject) parser.parse(payload);
+        
+        JSONArray decodedJWT = new JSONArray();
+        decodedJWT.add(json_header);
+        decodedJWT.add(json_payload);
+        
+        return decodedJWT;
     }
 }
