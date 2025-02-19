@@ -9,6 +9,7 @@ package com.mycompany.jwtauth;
  * @author bhats
  */
 public abstract class AbstractDB {
+    public AbstractDB(){};
     public abstract boolean verifyUser(String username, String password);
     public abstract String getClaims(String username);
     public abstract String getIssuer(String username);
